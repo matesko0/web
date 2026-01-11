@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archiv aktualit | SDH Hvožďany</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-gray-800 font-sans leading-normal">
+
+    <nav class="bg-red-700 text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-fire-extinguisher text-2xl"></i>
+                <span class="text-xl font-black uppercase tracking-tighter">SDH Hvožďany</span>
+            </div>
+            <ul class="flex space-x-6 font-semibold text-sm uppercase">
+                <li><a href="index.html" class="hover:text-red-200">Zpět na úvod</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-12">
+        <h1 class="text-4xl md:text-5xl font-black uppercase italic text-center text-slate-900 mb-12">Archiv aktualit</h1>
+        <div id="seznam-aktualit" class="grid md:grid-cols-3 gap-8">
+            </div>
+    </main>
+
+    <div id="modal-detail" class="fixed inset-0 bg-black/95 z-[100] hidden flex items-center justify-center p-2 md:p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
+            <div id="modal-obsah" class="p-8"></div>
+            <div class="p-4 border-t text-right sticky bottom-0 bg-white">
+                <button onclick="zavriDetail()" class="bg-red-700 text-white px-8 py-2 rounded-full font-bold">Zavřít</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. ODKAZ NA TVOJE CSV PRO AKTUALITY
+        const csvAktualityUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKasjrBwUzJOjACQNGBEC_uQrNP2aw3cMH_CWGBVW2MDg8pp6uQ4dTzUhuYJJ8UgRFRaP-ooMqb3fm/pub?output=csv';
+    
+        // Tahle funkce byla rozbitá - tady je opravená verze
+        function upravDriveOdkaz(odkaz) {
+            if (!odkaz) return null;
+            const url = odkaz.trim();
+            if (url.includes('drive.google.com')) {
+                const match = url.match(/id=([\w-]+)/) || url.match(/\/d\/([\w-]+)/);
+                if (match && match[1]) {
+                    const id = match[1];
+                    // Teď už se správným dolarem a funkčním linkem
+                    return `https://lh3.googleusercontent.com/d/${id}`;
+                }
+            }
+            return url;
+        }
+    
+        async function nactiVsechnyAktuality() {
+            try {
+                const res = await fetch(csvAktualityUrl);
+                const text = await res.text();
+                // Rozdělení na řádky, očištění a přeskočení hlavičky
+                const radky = text.split('\n').map(r => r.trim()).filter(r => r.length > 0).slice(1);
+    
+                const data = radky.map(radek => {
+                    const sl = radek.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    return {
+                        datum: sl[1]?.replace(/"/g, '') || '',
+                        titulek: sl[2]?.replace(/"/g, '') || '',
+                        text: sl[3]?.replace(/"/g, '') || '',
+                        foto: upravDriveOdkaz(sl[4]?.replace(/"/g, '')),
+                        odkaz: sl[5]?.replace(/"/g, '')?.trim() || ''
+                    }
+                }).filter(a => a.titulek && a.titulek.length > 2);
+    
+                 vykresliArchiv(data.reverse()); // Seřadit od nejnovějších
+            } catch (err) {
+                console.error("Chyba:", err);
+                document.getElementById('seznam-aktualit').innerHTML = '<p class="text-red-500">Nepodařilo se načíst archiv.</p>';
+            }
+        }
+    
+        function vykresliArchiv(data) {
+            const kontejner = document.getElementById('seznam-aktualit');
+            kontejner.innerHTML = data.map(a => `
+                <div class="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100 transition hover:shadow-2xl group">
+                    <div class="h-48 bg-cover bg-center transition duration-500 group-hover:scale-105" style="background-image: url('${a.foto || 'https://via.placeholder.com/800x600?text=SDH+Hvozdany'}')"></div>
+                    <div class="p-6 text-left">
+                        <span class="text-red-700 font-bold text-xs uppercase tracking-widest">${a.datum}</span>
+                        <h4 class="text-xl font-black mt-1 mb-4 uppercase text-slate-900 line-clamp-2">${a.titulek}</h4>
+                        <button onclick='otevriDetailAktuality(${JSON.stringify(a).replace(/"/g, '&quot;')})' class="w-full bg-slate-100 hover:bg-red-700 hover:text-white text-gray-800 py-3 rounded-xl font-bold transition text-sm">Zobrazit celou aktualitu</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+    
+        // Funkce pro otevření okna (stejná jako na indexu)
+        window.otevriDetailAktuality = function(a) {
+            const tlacitkoOdkaz = a.odkaz ? `
+                <div class="mt-8 p-4 bg-red-50 rounded-2xl border border-red-100 flex items-center justify-between">
+                    <div class="pr-4">
+                        <p class="text-[10px] font-bold text-red-700 uppercase italic">Více informací</p>
+                        <p class="text-sm font-bold text-slate-900">K této aktualitě je přiložen odkaz</p>
+                    </div>
+                    <a href="${a.odkaz}" target="_blank" class="bg-red-700 hover:bg-red-800 text-white px-6 py-2 rounded-xl font-bold text-sm transition shrink-0 shadow-md">Otevřít</a>
+                </div>
+            ` : '';
+    
+            document.getElementById('modal-obsah').innerHTML = `
+                <span class="text-red-700 font-bold uppercase text-xs tracking-widest">${a.datum}</span>
+                <h2 class="text-3xl font-black mb-6 uppercase italic text-slate-900 leading-none">${a.titulek}</h2>
+                <img src="${a.foto || 'https://via.placeholder.com/800x600?text=SDH+Hvozdany'}" class="w-full h-64 object-cover rounded-3xl mb-8 shadow-lg">
+                <h4 class="font-black uppercase text-sm mb-2 border-b-2 border-red-700 inline-block italic">Podrobnosti</h4>
+                <p class="text-gray-600 text-lg leading-relaxed">${a.text}</p>
+                ${tlacitkoOdkaz}
+            `;
+            document.getElementById('modal-detail').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+    
+        window.zavriDetail = function() {
+            document.getElementById('modal-detail').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+    
+        // Spuštění
+        nactiVsechnyAktuality();
+    </script>
+</body>
+</html>
