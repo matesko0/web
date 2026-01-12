@@ -11,22 +11,23 @@
 <body class="bg-slate-50 text-gray-800 font-sans leading-normal">
 
     <nav class="bg-red-800 text-white shadow-2xl sticky top-0 z-[100]">
-    <div class="container mx-auto px-4">
-        <div class="flex flex-col md:flex-row justify-between items-center py-3 md:py-4">
-            <a href="index.html" class="flex items-center space-x-3 mb-3 md:mb-0">
-                <i class="fas fa-fire-extinguisher text-2xl"></i>
-                <span class="text-xl font-black uppercase tracking-tighter">SDH Hvožďany</span>
-            </a>
-            <ul class="flex space-x-4 md:space-x-8 font-bold text-[13px] md:text-sm uppercase tracking-wider">
-                <li><a href="index.html" class="hover:text-red-200 py-2 transition">Úvod</a></li>
-                <li><a href="aktuality.html" class="hover:text-red-200 py-2 transition">Aktuality</a></li>
-                <li><a href="vyjezdy.html" class="hover:text-red-200 py-2 transition">Výjezdy</a></li>
-                <li><a href="kontakt.html" class="hover:text-red-200 py-2 transition">Kontakt</a></li>
-                <li><a href="admin.html" class="text-white/20 hover:text-white transition"><i class="fas fa-user-cog"></i></a></li>
-            </ul>
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center py-3 md:py-4">
+                <a href="index.html" class="flex items-center space-x-3 mb-3 md:mb-0">
+                    <i class="fas fa-fire-extinguisher text-2xl"></i>
+                    <span class="text-xl font-black uppercase tracking-tighter">SDH Hvožďany</span>
+                </a>
+                <ul class="flex space-x-4 md:space-x-8 font-bold text-[13px] md:text-sm uppercase tracking-wider items-center">
+                    <li><a href="index.html" class="hover:text-red-200 py-2 transition">Úvod</a></li>
+                    <li><a href="aktuality.html" class="hover:text-red-200 py-2 transition">Aktuality</a></li>
+                    <li><a href="vyjezdy.html" class="text-red-200 py-2 transition border-b-2 border-red-200">Výjezdy</a></li>
+                    <li><a href="technika.html" class="hover:text-red-200 py-2 transition">Technika</a></li>
+                    <li><a href="kontakt.html" class="hover:text-red-200 py-2 transition">Kontakt</a></li>
+                    <li><a href="admin.html" class="text-white/20 hover:text-white transition"><i class="fas fa-user-cog"></i></a></li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
     <main class="container mx-auto px-4 py-12">
         <section class="mb-20">
@@ -34,9 +35,26 @@
                 <h1 class="text-4xl md:text-5xl font-black uppercase italic text-slate-900 mb-2">Kompletní archiv zásahů</h1>
                 <p class="text-gray-500 italic">Přehled veškeré výjezdové činnosti naší jednotky</p>
             </div>
-            
-            <div id="seznam-vyjezdu" class="grid md:grid-cols-3 gap-8">
+
+            <div class="bg-white p-6 rounded-[32px] shadow-lg mb-12 border border-gray-100 flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-2 tracking-widest">Typ zásahu</label>
+                    <select id="filter-typ" onchange="aplikujFiltry()" class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-red-600 font-bold text-sm cursor-pointer">
+                        <option value="">Všechny typy</option>
+                        <option value="pozar">Požár</option>
+                        <option value="technicka pomoc">Technická pomoc</option>
+                        <option value="zachrana">Záchrana osob a zvířat</option>
+                        <option value="plany polach">Planý poplach</option>
+                        <option value="jine">Jiné</option>
+                    </select>
                 </div>
+                <div class="flex-1">
+                    <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-2 tracking-widest">Hledat</label>
+                    <input type="text" id="search-input" onkeyup="aplikujFiltry()" placeholder="Hledej obec, rok..." class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-red-600 font-bold text-sm">
+                </div>
+            </div>
+            
+            <div id="seznam-vyjezdu" class="grid md:grid-cols-3 gap-8"></div>
         </section>
     </main>
 
@@ -51,20 +69,40 @@
 
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRc6ppmJmRU8s1k3_W1S01ZePur9FuBNYd-sNGd-QErm6e3jZaezOgkO55cPlzaxxcGDUwUTxn2NVWK/pub?output=csv';
+        let vsechnaData = [];
 
-        function upravDriveOdkaz(odkaz) {
-    if (!odkaz) return null;
-    const url = odkaz.trim();
-    if (url.includes('drive.google.com')) {
-        const match = url.match(/id=([\w-]+)/) || url.match(/\/d\/([\w-]+)/);
-        if (match && match[1]) {
-            const id = match[1];
-            // Tohle je teď nejspolehlivější link pro přímé zobrazení z Google Drive
-            return `https://lh3.googleusercontent.com/d/${id}`;
+        // OPRAVA: Odstranění sekund
+        function zkratCas(c) {
+            if (!c) return "";
+            const t = c.trim();
+            const casti = t.split(':');
+            return casti.length >= 2 ? casti[0] + ':' + casti[1] : t;
         }
-    }
-    return url;
-}
+
+        // OPRAVA: Funkční barvy štítků
+        function urciBarvu(typ) {
+            const t = typ.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            if (t.includes('pozar')) return 'bg-red-600';
+            if (t.includes('technicka')) return 'bg-blue-600';
+            if (t.includes('zachrana')) return 'bg-emerald-600';
+            if (t.includes('plany')) return 'bg-amber-500';
+            return 'bg-slate-600';
+        }
+
+        // OPRAVA: Funkční odkazy na Drive fotky
+        function upravDriveOdkaz(odkaz) {
+            if (!odkaz) return null;
+            const url = odkaz.trim();
+            if (url.includes('drive.google.com')) {
+                const match = url.match(/id=([\w-]+)/) || url.match(/\/d\/([\w-]+)/);
+                if (match && match[1]) {
+                    const id = match[1];
+                    // Nový formát, který Google lépe baští
+                    return `https://lh3.googleusercontent.com/d/${id}`;
+                }
+            }
+            return url;
+        }
 
         async function nactiVyjezdy() {
             try {
@@ -72,51 +110,61 @@
                 const text = await response.text();
                 const radky = text.split('\n').map(r => r.trim()).filter(r => r.length > 0).slice(1); 
                 
-                const vyjezdy = radky.map(radek => {
+                vsechnaData = radky.map(radek => {
                     const sl = radek.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); 
                     const rawFotky = sl[7]?.replace(/"/g, '') || '';
                     let fotkyArray = rawFotky.split(',').map(url => upravDriveOdkaz(url)).filter(url => url !== null);
-                    if (fotkyArray.length === 0) fotkyArray.push('https://via.placeholder.com/800x600?text=SDH+Hvozdany');
-
+                    
                     return {
                         datum: sl[1]?.replace(/"/g, '') || '',
-                        cas: sl[2]?.replace(/"/g, '') || '',
+                        cas: zkratCas(sl[2]?.replace(/"/g, '')),
                         nazev: sl[3]?.replace(/"/g, '') || '',
                         typ: sl[4]?.replace(/"/g, '') || 'Zásah',
                         technika: sl[5]?.replace(/"/g, '') || 'Nespecifikováno',
                         popis: sl[6]?.replace(/"/g, '') || '',
-                        fotoMain: fotkyArray[0],
-                        fotkyGalerie: fotkyArray.slice(0, 5)
+                        fotkyGalerie: fotkyArray
                     };
                 }).filter(v => v.nazev.length > 2);
 
-                // TADY JE ROZDÍL: Nezkracujeme pole, vykreslíme vše
-                vykresliVyjezdy(vyjezdy.reverse());
+                vykresliVyjezdy(vsechnaData.slice().reverse());
             } catch (error) {
                 document.getElementById('seznam-vyjezdu').innerHTML = '<p class="text-red-500">Chyba při načítání dat.</p>';
             }
         }
 
+        // OPRAVA: Funkční filtrování
+        function aplikujFiltry() {
+            const typValue = document.getElementById('filter-typ').value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const searchValue = document.getElementById('search-input').value.toLowerCase();
+
+            const filtrovano = vsechnaData.filter(v => {
+                const typZasahu = v.typ.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                const sediTyp = typValue === "" || typZasahu.includes(typValue);
+                const sediSearch = v.datum.toLowerCase().includes(searchValue) || 
+                                   v.nazev.toLowerCase().includes(searchValue) || 
+                                   v.popis.toLowerCase().includes(searchValue);
+                return sediTyp && sediSearch;
+            });
+            vykresliVyjezdy(filtrovano.slice().reverse());
+        }
+
         function vykresliVyjezdy(data) {
             const kontejner = document.getElementById('seznam-vyjezdu');
             kontejner.innerHTML = data.map((v) => `
-                <div class="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100 transition hover:shadow-2xl group">
-                    <div class="h-48 bg-cover bg-center transition duration-500 group-hover:scale-105" style="background-image: url('${v.fotoMain}')">
-                        ${v.fotkyGalerie.length > 1 ? '<div class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full"><i class="fas fa-images mr-1"></i>'+ v.fotkyGalerie.length +' fotky</div>' : ''}
+                <div class="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100 transition hover:shadow-2xl group p-6 cursor-pointer" onclick='otevriDetailWithGallery(${JSON.stringify(v).replace(/'/g, "&apos;")})'>
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="${urciBarvu(v.typ)} text-white text-[10px] px-2 py-1 rounded-md font-bold uppercase">${v.typ}</span>
+                        <span class="text-gray-400 text-xs font-mono font-bold">${v.datum}</span>
                     </div>
-                    <div class="p-6 text-left bg-white">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="${v.typ.includes('Požár') ? 'bg-red-600' : 'bg-blue-600'} text-white text-[10px] px-2 py-1 rounded-md font-bold uppercase">${v.typ}</span>
-                            <span class="text-gray-400 text-xs font-mono font-bold">${v.datum}</span>
-                        </div>
-                        <h4 class="text-xl font-black mb-4 leading-tight line-clamp-2">${v.nazev}</h4>
-                        <button onclick='otevriDetailWithGallery(${JSON.stringify(v)})' class="w-full bg-slate-100 hover:bg-red-700 hover:text-white text-gray-800 py-3 rounded-xl font-bold transition text-sm italic">Zobrazit detail</button>
+                    <h4 class="text-xl font-black mb-4 leading-tight group-hover:text-red-700 transition">${v.nazev}</h4>
+                    <p class="text-gray-500 text-sm line-clamp-3 mb-4">${v.popis}</p>
+                    <div class="flex items-center text-red-700 font-bold text-xs uppercase italic">
+                        Zobrazit detail zásahu <i class="fas fa-arrow-right ml-2 text-[10px]"></i>
                     </div>
                 </div>
             `).join('');
         }
 
-        // --- Zbytek logiky (slider atd.) stejný jako u index.html ---
         let currentSlideIdx = 0;
         let slideInterval;
         let totalSlides = 0;
@@ -124,20 +172,19 @@
         window.otevriDetailWithGallery = function(v) {
             currentSlideIdx = 0; totalSlides = v.fotkyGalerie.length;
             const slidesHtml = v.fotkyGalerie.map((url, index) => `<div class="slide absolute inset-0 opacity-0" data-index="${index}"><img src="${url}" class="block w-full h-full object-cover"></div>`).join('');
-            const navHtml = totalSlides > 1 ? `<button class="absolute top-0 left-0 z-30 h-full px-4" onclick="zmenSlide(-1)">❮</button><button class="absolute top-0 right-0 z-30 h-full px-4" onclick="zmenSlide(1)">❯</button>` : '';
-            const technikaBadge = v.technika.split(',').map(t => `<span class="bg-red-50 text-red-700 text-[11px] px-3 py-1 rounded-full border border-red-100 font-bold">${t.trim()}</span>`).join(' ');
+            const navHtml = totalSlides > 1 ? `<button class="absolute top-1/2 left-4 z-30 bg-black/50 text-white w-10 h-10 rounded-full" onclick="zmenSlide(-1)">❮</button><button class="absolute top-1/2 right-4 z-30 bg-black/50 text-white w-10 h-10 rounded-full" onclick="zmenSlide(1)">❯</button>` : '';
+            const technikaBadge = v.technika.split(',').map(t => `<span class="bg-red-50 text-red-700 text-[11px] px-3 py-1 rounded-full border border-red-100 font-bold uppercase">${t.trim()}</span>`).join(' ');
             
             document.getElementById('modal-obsah').innerHTML = `
-                <div class="flex items-center space-x-2 mb-2"><span class="w-3 h-3 rounded-full ${v.typ.includes('Požár') ? 'bg-red-600' : 'bg-blue-600'}"></span><span class="text-gray-400 font-bold uppercase text-xs tracking-widest">${v.typ}</span></div>
-                <h2 class="text-3xl font-black mb-6 italic uppercase text-slate-900">${v.nazev}</h2>
+                <div class="flex items-center space-x-2 mb-2"><span class="w-3 h-3 rounded-full ${urciBarvu(v.typ)}"></span><span class="text-gray-400 font-bold uppercase text-xs tracking-widest">${v.typ}</span></div>
+                <h2 class="text-3xl font-black mb-6 italic uppercase text-slate-900 leading-tight">${v.nazev}</h2>
                 <div class="grid grid-cols-2 gap-4 mb-8 bg-slate-50 p-4 rounded-2xl text-sm">
                     <div><p class="text-[10px] text-gray-400 font-bold uppercase">Datum a čas</p><p class="font-bold">${v.datum} | ${v.cas}</p></div>
-                    <div><p class="text-[10px] text-gray-400 font-bold uppercase text-red-700">JSDH Hvožďany</p></div>
-                    <div class="col-span-2 pt-2 border-t border-gray-200"><p class="text-[10px] text-gray-400 font-bold uppercase mb-2">Technika</p><div class="flex flex-wrap gap-2">${technikaBadge}</div></div>
+                    <div class="col-span-2 pt-2 border-t border-gray-200"><p class="text-[10px] text-gray-400 font-bold uppercase mb-2">Zasahující technika</p><div class="flex flex-wrap gap-2">${technikaBadge}</div></div>
                 </div>
-                <div id="gallery-container" class="relative w-full h-64 md:h-[400px] mb-8 rounded-2xl overflow-hidden bg-gray-100">${slidesHtml}${navHtml}</div>
-                <h4 class="font-black uppercase text-sm mb-2 border-b-2 border-red-700 inline-block italic">Popis</h4>
-                <p class="text-gray-600 leading-relaxed">${v.popis}</p>
+                <div id="gallery-container" class="relative w-full h-64 md:h-[400px] mb-8 rounded-2xl overflow-hidden bg-gray-100 shadow-lg">${slidesHtml}${navHtml}</div>
+                <h4 class="font-black uppercase text-sm mb-2 border-b-2 border-red-700 inline-block italic tracking-widest">Popis události</h4>
+                <p class="text-gray-600 leading-relaxed text-lg">${v.popis}</p>
             `;
             document.getElementById('modal-detail').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -146,9 +193,10 @@
 
         window.ukazSlide = function(n) {
             let slides = document.getElementsByClassName("slide");
+            if (slides.length === 0) return;
             if (n >= slides.length) currentSlideIdx = 0; if (n < 0) currentSlideIdx = slides.length - 1;
             for (let i = 0; i < slides.length; i++) { slides[i].style.opacity = 0; slides[i].style.zIndex = 1; }
-            if(slides[currentSlideIdx]) { slides[currentSlideIdx].style.opacity = 1; slides[currentSlideIdx].style.zIndex = 10; }
+            slides[currentSlideIdx].style.opacity = 1; slides[currentSlideIdx].style.zIndex = 10;
         }
         window.zmenSlide = function(n) { stopAutoplay(); ukazSlide(currentSlideIdx += n); startAutoplay(); }
         function startAutoplay() { if (totalSlides > 1) { clearInterval(slideInterval); slideInterval = setInterval(() => { ukazSlide(currentSlideIdx += 1); }, 5000); } }
@@ -158,32 +206,34 @@
         nactiVyjezdy();
     </script>
 </body>
+
 <footer class="bg-slate-900 text-white pt-12 pb-6 mt-20">
     <div class="container mx-auto px-4 text-center">
         <div class="grid md:grid-cols-3 gap-10 mb-10 text-left">
             <div>
                 <h4 class="font-black uppercase mb-4 text-red-600">SDH Hvožďany</h4>
-                <p class="text-gray-400 text-sm leading-relaxed">Dobrovolní hasiči obce Hvožďany. Pomáháme a chráníme od roku 1895. Jsme tu pro vás 24/7.</p>
+                <p class="text-gray-400 text-sm leading-relaxed">Dobrovolní hasiči obce Hvožďany. Pomáháme a chráníme od roku 1895.</p>
             </div>
             <div>
-                <h4 class="font-black uppercase mb-4 text-red-600">Rychlé odkazy</h4>
-                <ul class="text-gray-400 text-sm space-y-2">
-                    <li><a href="index.html" class="hover:text-white">Hlavní strana</a></li>
-                    <li><a href="aktuality.html" class="hover:text-white">Seznam aktualit</a></li>
-                    <li><a href="vyjezdy.html" class="hover:text-white">Archiv zásahů</a></li>
-                    <li><a href="https://paleni.izscr.cz/" target="_blank" class="hover:text-white">Hlášení pálení</a></li>
+                <h4 class="font-black uppercase mb-4 text-red-600 uppercase tracking-widest">Rychlé odkazy</h4>
+                <ul class="text-gray-400 text-sm space-y-2 font-bold uppercase tracking-tight">
+                    <li><a href="index.html" class="hover:text-white transition">Úvod</a></li>
+                    <li><a href="aktuality.html" class="hover:text-white transition">Aktuality</a></li>
+                    <li><a href="vyjezdy.html" class="hover:text-white transition">Výjezdy</a></li>
+                    <li><a href="technika.html" class="hover:text-white transition">Technika</a></li>
+                    <li><a href="kontakt.html" class="hover:text-white transition">Kontakt</a></li>
                 </ul>
             </div>
             <div>
                 <h4 class="font-black uppercase mb-4 text-red-600">Tísňové volání</h4>
                 <div class="flex space-x-4">
-                    <span class="bg-red-700 px-4 py-2 rounded-xl font-black text-xl">150</span>
-                    <span class="bg-blue-700 px-4 py-2 rounded-xl font-black text-xl">112</span>
+                    <span class="bg-red-700 px-5 py-2 rounded-2xl font-black text-xl shadow-lg">150</span>
+                    <span class="bg-blue-700 px-5 py-2 rounded-2xl font-black text-xl shadow-lg">112</span>
                 </div>
             </div>
         </div>
-        <div class="border-t border-gray-800 pt-6 text-gray-500 text-[10px] uppercase tracking-widest italic">
-            &copy; 2024 SDH Hvožďany | Vytvořeno pro sbor
+        <div class="border-t border-gray-800 pt-6 text-gray-500 text-[9px] uppercase tracking-widest italic font-black">
+            © 2024 SDH Hvožďany | Jednotka sboru dobrovolných hasičů
         </div>
     </div>
 </footer>
