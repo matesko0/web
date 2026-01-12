@@ -3,73 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrace | SDH Hvožďany</title>
+    <title>Admin Panel | SDH Hvožďany</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        #login-screen {
+            background-color: #0f172a;
+        }
+    </style>
 </head>
-<body class="bg-slate-900 text-white font-sans min-h-screen">
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen pb-10">
 
-    <div id="login-screen" class="fixed inset-0 bg-slate-900 z-[200] flex items-center justify-center p-4">
-        <div class="bg-white text-slate-900 p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center">
-            <i class="fas fa-lock text-4xl text-red-600 mb-4"></i>
-            <h2 class="text-2xl font-black uppercase mb-6">Vstup pro adminy</h2>
-            <input type="password" id="admin-password" placeholder="Zadejte kód" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 mb-4 text-center text-2xl tracking-widest focus:border-red-600 outline-none">
-            <button onclick="checkPassword()" class="w-full bg-red-700 text-white py-4 rounded-xl font-bold uppercase hover:bg-red-800 transition">Přihlásit se</button>
-            <p id="error-msg" class="text-red-600 text-sm mt-4 hidden">Špatný kód, zkuste to znovu.</p>
+    <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center p-4 text-center">
+        <div class="bg-white text-slate-900 p-8 rounded-3xl shadow-2xl w-full max-w-sm">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-lock text-2xl"></i>
+            </div>
+            <h2 class="text-2xl font-black uppercase mb-2">Vstup pro adminy</h2>
+            <p class="text-gray-500 text-sm mb-6">Zadejte heslo pro přístup k ovládání</p>
+            
+            <input type="password" id="password-input" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 mb-4 text-center focus:border-red-600 outline-none transition" placeholder="Heslo">
+            
+            <button onclick="checkPassword()" class="w-full bg-red-700 text-white py-4 rounded-xl font-black uppercase hover:bg-red-800 transition active:scale-95 shadow-lg mb-4">
+                Přihlásit se
+            </button>
+
+            <a href="index.html" class="inline-block text-gray-400 hover:text-red-700 text-xs font-bold uppercase transition tracking-widest">
+                <i class="fas fa-arrow-left mr-1"></i> Zpět na web
+            </a>
+            
+            <p id="error-msg" class="text-red-600 text-xs mt-4 font-bold hidden">Špatné heslo! Zkuste to znovu.</p>
         </div>
     </div>
 
     <div id="admin-content" class="hidden">
-        <nav class="bg-red-800 p-4 shadow-lg flex justify-between items-center">
-            <span class="font-black uppercase tracking-tighter italic">Admin Panel SDH</span>
-            <button onclick="location.reload()" class="text-xs bg-black/20 px-3 py-1 rounded-lg">Odhlásit</button>
+        <nav class="bg-red-800 p-5 shadow-2xl mb-8">
+            <div class="container mx-auto flex justify-between items-center">
+                <h1 class="font-black uppercase italic tracking-tighter">Admin SDH Hvožďany</h1>
+                <div class="flex items-center space-x-4">
+                    <button onclick="logout()" class="text-[10px] uppercase font-bold bg-black/20 px-3 py-1 rounded-lg hover:bg-black/40">Odhlásit</button>
+                    <a href="index.html" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-xs font-bold transition">Zpět na web</a>
+                </div>
+            </div>
         </nav>
 
-        <main class="container mx-auto px-4 py-8">
-            <div class="flex flex-wrap gap-4 mb-8">
-                <button onclick="showForm('vyjezdy')" class="flex-1 bg-red-700 p-4 rounded-2xl font-bold uppercase shadow-lg hover:scale-105 transition">
-                    <i class="fas fa-truck-extinguisher mr-2"></i> Nový Výjezd
-                </button>
-                <button onclick="showForm('aktuality')" class="flex-1 bg-blue-700 p-4 rounded-2xl font-bold uppercase shadow-lg hover:scale-105 transition">
-                    <i class="fas fa-newspaper mr-2"></i> Nová Aktualita
-                </button>
+        <main class="container mx-auto px-4 max-w-2xl">
+            <div class="mb-10">
+                <h2 class="text-gray-400 uppercase text-[10px] font-black tracking-[0.2em] mb-4 ml-2">Nové záznamy (Formuláře)</h2>
+                <div class="grid grid-cols-1 gap-4">
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeVqwjs38QW6DLGF-wx-foovhVEfoo0I6zV5nF_lyko2ma9mg/viewform?usp=header" target="_blank" class="bg-red-700 hover:bg-red-600 p-6 rounded-3xl shadow-lg flex items-center justify-between transition active:scale-95 border-b-4 border-red-900">
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-file-signature text-2xl text-white/50"></i>
+                            <span class="font-black uppercase italic text-lg tracking-tight">Zapsat nový výjezd</span>
+                        </div>
+                        <i class="fas fa-chevron-right opacity-30"></i>
+                    </a>
+
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeZV3SjoehcOcodfHpeI8NzVESwNZHVOF9N32DFGGceiXdFFQ/viewform?usp=header" target="_blank" class="bg-blue-700 hover:bg-blue-600 p-6 rounded-3xl shadow-lg flex items-center justify-between transition active:scale-95 border-b-4 border-blue-900">
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-bullhorn text-2xl text-white/50"></i>
+                            <span class="font-black uppercase italic text-lg tracking-tight">Napsat aktualitu</span>
+                        </div>
+                        <i class="fas fa-chevron-right opacity-30"></i>
+                    </a>
+                </div>
             </div>
 
-            <div class="bg-white rounded-3xl overflow-hidden shadow-2xl h-[800px] relative">
-                <div id="placeholder" class="absolute inset-0 flex items-center justify-center text-slate-400 italic">
-                    Vyberte, co chcete přidat...
+            <div class="mb-10">
+                <h2 class="text-gray-400 uppercase text-[10px] font-black tracking-[0.2em] mb-4 ml-2">Hasičské nástroje</h2>
+                <div class="space-y-3">
+                    <a href="https://paleni.izscr.cz/" target="_blank" class="block bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-fire-extinguisher text-red-500"></i>
+                                <span class="font-bold text-sm uppercase">Hlášení pálení (IZS)</span>
+                            </div>
+                            <i class="fas fa-external-link-alt text-[10px] opacity-20"></i>
+                        </div>
+                    </a>
+                    <a href="https://www.hzscr.cz/clanek/vystrahy-a-nebezpeci-pozaru.aspx" target="_blank" class="block bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/10 transition">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+                                <span class="font-bold text-sm uppercase">Výstrahy a požární riziko</span>
+                            </div>
+                            <i class="fas fa-external-link-alt text-[10px] opacity-20"></i>
+                        </div>
+                    </a>
                 </div>
-                <iframe id="admin-iframe" src="" class="w-full h-full border-none hidden"></iframe>
             </div>
         </main>
+
+        <footer class="text-center text-slate-600 text-[10px] uppercase font-bold tracking-widest mt-10">
+            SDH Hvožďany Admin Dashboard
+        </footer>
     </div>
 
     <script>
-        // TADY SI NASTAV SVŮJ KÓD (třeba 1234)
-        const MASTER_CODE = "1234"; 
-
-        // ODKAZY NA TVOJE GOOGLE FORMULÁŘE (VLOŽ TY SVOJE)
-        const formVyjezdy = "https://docs.google.com/forms/d/e/1FAIpQLSeVqwjs38QW6DLGF-wx-foovhVEfoo0I6zV5nF_lyko2ma9mg/viewform";
-        const formAktuality = "https://docs.google.com/forms/d/e/1FAIpQLSeZV3SjoehcOcodfHpeI8NzVESwNZHVOF9N32DFGGceiXdFFQ/viewform";
+        const correctPassword = "hvozdany123";
 
         function checkPassword() {
-            const input = document.getElementById('admin-password').value;
-            if(input === MASTER_CODE) {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('admin-content').classList.remove('hidden');
+            const enteredPassword = document.getElementById('password-input').value;
+            const loginScreen = document.getElementById('login-screen');
+            const adminContent = document.getElementById('admin-content');
+            const errorMsg = document.getElementById('error-msg');
+
+            if (enteredPassword === correctPassword) {
+                loginScreen.classList.add('hidden');
+                adminContent.classList.remove('hidden');
+                errorMsg.classList.add('hidden');
             } else {
-                document.getElementById('error-msg').classList.remove('hidden');
+                errorMsg.classList.remove('hidden');
+                document.getElementById('password-input').value = "";
             }
         }
 
-        function showForm(type) {
-            const iframe = document.getElementById('admin-iframe');
-            const placeholder = document.getElementById('placeholder');
-            placeholder.classList.add('hidden');
-            iframe.classList.remove('hidden');
-            
-            if(type === 'vyjezdy') iframe.src = formVyjezdy;
-            if(type === 'aktuality') iframe.src = formAktuality;
+        document.getElementById('password-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        function logout() {
+            location.reload();
         }
     </script>
 </body>
