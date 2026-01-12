@@ -8,6 +8,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .slide { transition: opacity 0.7s ease-in-out; }
+
+        /* ČISTÝ SCROLLBAR PRO MODAL */
+        #modal-obsah-scroll::-webkit-scrollbar { width: 8px; }
+        #modal-obsah-scroll::-webkit-scrollbar-track { background: #f8fafc; }
+        #modal-obsah-scroll::-webkit-scrollbar-thumb { background-color: #ef4444; border-radius: 10px; }
+        #modal-obsah-scroll { scrollbar-width: thin; scrollbar-color: #ef4444 #f8fafc; }
+        
+        /* ZACHOVÁNÍ ENTERŮ V TEXTU */
+        .zachovat-entery { white-space: pre-line; }
     </style>
 </head>
 <body class="bg-slate-50 text-gray-800 font-sans leading-normal">
@@ -33,265 +42,191 @@
     </div>
 </nav>
 
-    <header id="uvod" class="relative h-[400px] flex items-center justify-center text-white">
+    <header class="relative h-[400px] flex items-center justify-center text-white">
         <div class="absolute inset-0 bg-black/60 z-10"></div>
         <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1516550130565-5d72370e241b?q=80&w=2000')] bg-cover bg-center"></div>
         <div class="relative z-20 text-center px-4">
             <h2 class="text-5xl md:text-6xl font-black mb-4 uppercase italic">SDH Hvožďany</h2>
-            <p class="text-xl font-light max-w-2xl mx-auto">Pomáháme obci a občanům už od roku 1887.</p>
+            <p class="text-xl font-light max-w-2xl mx-auto uppercase tracking-widest italic">Pomáháme a chráníme od roku 1887</p>
         </div>
     </header>
 
     <main class="container mx-auto px-4 py-12">
         <section id="aktuality" class="mb-20">
-            <h3 class="text-3xl font-black uppercase italic border-l-8 border-red-700 pl-4 mb-10">Aktuality</h3>
-            
-            <div id="seznam-aktualit" class="grid md:grid-cols-3 gap-8"></div>
-        
+            <h3 class="text-3xl font-black uppercase italic border-l-8 border-red-700 pl-4 mb-10 text-slate-900">Aktuality</h3>
+            <div id="seznam-aktualit" class="grid md:grid-cols-3 gap-8 text-left"></div>
             <div class="text-center mt-12">
-                <a href="aktuality.html" class="inline-block border-2 border-slate-900 hover:bg-slate-900 hover:text-white text-slate-900 px-10 py-4 rounded-2xl font-black uppercase tracking-widest transition shadow-md">
-                    Starší aktuality
-                </a>
+                <a href="aktuality.html" class="inline-block border-2 border-slate-900 hover:bg-slate-900 hover:text-white text-slate-900 px-10 py-4 rounded-2xl font-black uppercase tracking-widest transition">Archiv aktualit</a>
             </div>
         </section>
+
         <section id="vyjezdy" class="mb-20">
-            <div class="flex items-center justify-between mb-10">
-                <h3 class="text-3xl font-black uppercase italic border-l-8 border-red-700 pl-4">Zásahová činnost</h3>
-            </div>
-            <div id="seznam-vyjezdu" class="grid md:grid-cols-3 gap-8 text-center py-10">
-                <p class="col-span-full text-gray-400 animate-pulse italic">Načítám data...</p>
+            <h3 class="text-3xl font-black uppercase italic border-l-8 border-red-700 pl-4 mb-10 text-slate-900">Zásahová činnost</h3>
+            <div id="seznam-vyjezdu" class="grid md:grid-cols-3 gap-8 text-left">
+                <p class="col-span-full text-center text-gray-400 animate-pulse italic">Načítám poslední zásahy...</p>
             </div>
             <div class="text-center mt-12">
-                <a href="vyjezdy.html" class="inline-block bg-slate-900 hover:bg-red-700 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest transition shadow-lg">
-                    Zobrazit celý archiv výjezdů
-                </a>
+                <a href="vyjezdy.html" class="inline-block bg-slate-900 hover:bg-red-700 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest transition shadow-lg">Zobrazit celou kroniku</a>
             </div>
         </section>
     </main>
-    
 
-    <div id="modal-detail" class="fixed inset-0 bg-black/95 z-[100] hidden flex items-center justify-center p-2 md:p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[95vh] overflow-y-auto shadow-2xl relative">
+    <div id="modal-detail" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-2 md:p-6 backdrop-blur-sm" onclick="zavriDetail()">
+        <div class="bg-white rounded-[40px] max-w-4xl w-full max-h-[90vh] shadow-2xl relative text-left overflow-hidden flex flex-col" onclick="event.stopPropagation()">
             
-            <div id="modal-obsah" class="p-6 md:p-8">
-                </div>
+            <div id="modal-header" class="p-8 md:p-10 border-b bg-white relative z-10">
+                <div id="modal-meta" class="mb-4"></div>
+                <h2 id="modal-titulek" class="text-3xl md:text-5xl font-black italic uppercase text-slate-900 leading-tight tracking-tighter"></h2>
+            </div>
 
-            <div class="p-4 border-t bg-gray-50 flex justify-between items-center sticky bottom-0">
-                <span class="text-xs text-gray-500 italic hidden md:block">Pro zavření klikněte na tlačítko nebo mimo okno</span>
-                <button onclick="zavriDetail()" class="bg-red-700 hover:bg-red-800 text-white px-6 py-2 rounded-full font-bold shadow-lg transition uppercase text-sm">Zavřít</button>
+            <div id="modal-obsah-scroll" class="overflow-y-auto flex-grow bg-white">
+                <div id="modal-obsah" class="p-8 md:p-10"></div>
+            </div>
+
+            <div class="p-6 border-t bg-gray-50 flex justify-end relative z-10">
+                <button onclick="zavriDetail()" class="bg-red-700 hover:bg-red-800 text-white px-10 py-4 rounded-2xl font-black shadow-lg transition uppercase text-sm tracking-widest">Zavřít</button>
             </div>
         </div>
     </div>
 
     <script>
-        // 1. ODKAZ NA TVOJE CSV
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRc6ppmJmRU8s1k3_W1S01ZePur9FuBNYd-sNGd-QErm6e3jZaezOgkO55cPlzaxxcGDUwUTxn2NVWK/pub?output=csv';
-    
-        // Opravená funkce pro Google Drive fotky (chyběl tam znak $)
+        const csvAktualityUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKasjrBwUzJOjACQNGBEC_uQrNP2aw3cMH_CWGBVW2MDg8pp6uQ4dTzUhuYJJ8UgRFRaP-ooMqb3fm/pub?output=csv';
+
+        // Robustní parser pro CSV s Entery v buňkách
+        function parseCSV(text) {
+            const result = [];
+            let row = [''];
+            let inQuotes = false;
+            let i = 0;
+            while (i < text.length) {
+                const char = text[i];
+                const nextChar = text[i+1];
+                if (char === '"' && inQuotes && nextChar === '"') { row[row.length-1] += '"'; i++; }
+                else if (char === '"') { inQuotes = !inQuotes; }
+                else if (char === ',' && !inQuotes) { row.push(''); }
+                else if (char === '\n' && !inQuotes) { result.push(row); row = ['']; }
+                else if (char !== '\r') { row[row.length-1] += char; }
+                i++;
+            }
+            if (row.length > 1 || row[0] !== '') result.push(row);
+            return result;
+        }
+
+        function urciBarvu(typ) {
+            const t = typ.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            if (t.includes('pozar')) return 'bg-red-600 text-white';
+            if (t.includes('technicka')) return 'bg-blue-600 text-white';
+            if (t.includes('zachrana')) return 'bg-emerald-600 text-white';
+            if (t.includes('plany')) return 'bg-amber-500 text-white';
+            return 'bg-slate-600 text-white';
+        }
+
         function upravDriveOdkaz(odkaz) {
             if (!odkaz) return null;
-            const url = odkaz.trim();
-            if (url.includes('drive.google.com')) {
-                const match = url.match(/id=([\w-]+)/) || url.match(/\/d\/([\w-]+)/);
-                if (match && match[1]) {
-                    const id = match[1];
-                    // Tento formát je pro Google Drive nejstabilnější
-                    return `https://lh3.googleusercontent.com/d/${id}`;
-                }
-            }
-            return url;
+            const match = odkaz.match(/id=([\w-]+)/) || odkaz.match(/\/d\/([\w-]+)/);
+            if (match && match[1]) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
+            return odkaz;
         }
-    
+
         async function nactiVyjezdy() {
-    try {
-        const response = await fetch(csvUrl);
-        const text = await response.text();
-        const radky = text.split('\n').map(r => r.trim()).filter(r => r.length > 0).slice(1); 
+            try {
+                const res = await fetch(csvUrl);
+                const text = await res.text();
+                const radky = parseCSV(text).slice(1);
+                const vyjezdy = radky.map(sl => ({
+                    datum: sl[1] || '',
+                    cas: (sl[2] || '').split(':').slice(0,2).join(':'),
+                    nazev: sl[3] || '',
+                    typ: sl[4] || 'Jiné',
+                    technika: sl[5] || '',
+                    popis: sl[6] || '',
+                    fotky: (sl[7] || '').split(',').map(url => upravDriveOdkaz(url.trim())).filter(url => url !== null)
+                })).filter(v => v.nazev.length > 2).reverse().slice(0, 3);
 
-        const vyjezdy = radky.map(radek => {
-            const sl = radek.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); 
-            const rawFotky = sl[7]?.replace(/"/g, '') || '';
-            let fotkyArray = rawFotky.split(',').map(url => upravDriveOdkaz(url)).filter(url => url !== null);
-            if (fotkyArray.length === 0) fotkyArray.push('https://via.placeholder.com/800x600?text=SDH+Hvozdany');
-
-            return {
-                datum: sl[1]?.replace(/"/g, '') || '',
-                cas: sl[2]?.replace(/"/g, '') || '',
-                nazev: sl[3]?.replace(/"/g, '') || '',
-                typ: sl[4]?.replace(/"/g, '') || 'Zásah',
-                technika: sl[5]?.replace(/"/g, '') || 'Nespecifikováno',
-                popis: sl[6]?.replace(/"/g, '') || '',
-                fotoMain: fotkyArray[0],
-                fotkyGalerie: fotkyArray.slice(0, 5)
-            };
-        }).filter(v => v.nazev.length > 2);
-
-        // TADY JE TA ZMĚNA:
-        const posledniTri = vyjezdy.reverse().slice(0, 3);
-        vykresliVyjezdy(posledniTri);
-
-    } catch (error) {
-        console.error(error);
-        document.getElementById('seznam-vyjezdu').innerHTML = '<p class="text-red-500">Chyba při načítání dat.</p>';
-    }
-}
-    
-        function vykresliVyjezdy(data) {
-            const kontejner = document.getElementById('seznam-vyjezdu');
-            if (data.length === 0) {
-                kontejner.innerHTML = '<p class="col-span-full text-gray-500">Žádné platné výjezdy k zobrazení.</p>';
-                return;
-            }
-            kontejner.innerHTML = data.map((v) => `
-                <div class="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100 transition hover:shadow-2xl group">
-                    <div class="h-48 bg-cover bg-center transition duration-500 group-hover:scale-105" style="background-image: url('${v.fotoMain}')">
-                        ${v.fotkyGalerie.length > 1 ? '<div class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full"><i class="fas fa-images mr-1"></i>'+ v.fotkyGalerie.length +' fotky</div>' : ''}
-                    </div>
-                    <div class="p-6 text-left relative bg-white">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="${v.typ.includes('Požár') ? 'bg-red-600' : 'bg-blue-600'} text-white text-[10px] px-2 py-1 rounded-md font-bold uppercase">${v.typ}</span>
-                            <span class="text-gray-400 text-xs font-mono font-bold">${v.datum}</span>
+                document.getElementById('seznam-vyjezdu').innerHTML = vyjezdy.map(v => `
+                    <div onclick='otevriDetailWithGallery(${JSON.stringify(v).replace(/'/g, "&apos;")})' class="bg-white rounded-[40px] shadow-lg border border-gray-100 transition hover:shadow-2xl hover:-translate-y-1 p-8 cursor-pointer">
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="${urciBarvu(v.typ)} text-[9px] px-3 py-1 rounded-full font-black uppercase tracking-widest">${v.typ}</span>
+                            <span class="text-gray-300 text-[10px] font-black uppercase">${v.datum}</span>
                         </div>
-                        <h4 class="text-xl font-black mb-4 leading-tight line-clamp-2">${v.nazev}</h4>
-                        <button onclick='otevriDetailWithGallery(${JSON.stringify(v)})' class="w-full bg-slate-100 hover:bg-red-700 hover:text-white text-gray-800 py-3 rounded-xl font-bold transition text-sm italic">Zobrazit detail a fotky</button>
+                        <h4 class="text-xl font-black mb-4 uppercase italic leading-tight">${v.nazev}</h4>
+                        <p class="text-gray-500 text-sm line-clamp-3 leading-relaxed">${v.popis}</p>
+                        <div class="text-red-700 font-black text-[10px] uppercase tracking-[0.3em] flex items-center">
+                            Více informací <i class="fas fa-arrow-right ml-2 text-[8px]"></i>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            } catch (e) { console.error(e); }
         }
-    
-        // --- Zbytek funkcí (otevriDetailWithGallery, atd.) zůstává stejný jako minule ---
+
+        async function nactiAktuality() {
+            try {
+                const res = await fetch(csvAktualityUrl);
+                const text = await res.text();
+                const radky = parseCSV(text).slice(1);
+                const aktuality = radky.map(sl => ({
+                    datum: sl[1] || '',
+                    titulek: sl[2] || '',
+                    text: sl[3] || '',
+                    foto: upravDriveOdkaz(sl[4]) || 'https://static.vecteezy.com/system/resources/previews/021/498/086/non_2x/firefighter-car-illustration-with-simple-design-isolated-on-white-background-vector.jpg',
+                    odkaz: (sl[5] || '').trim()
+                })).filter(a => a.titulek.length > 2).reverse().slice(0, 3);
+
+                document.getElementById('seznam-aktualit').innerHTML = aktuality.map(a => `
+                    <div class="bg-white rounded-[40px] shadow-lg overflow-hidden border border-gray-100 transition hover:shadow-2xl hover:-translate-y-1 group cursor-pointer" onclick='otevriDetailAktuality(${JSON.stringify(a).replace(/'/g, "&apos;")})'>
+                        <div class="h-48 bg-cover bg-center transition duration-500 group-hover:scale-105" style="background-image: url('${a.foto}')"></div>
+                        <div class="p-8">
+                            <span class="text-red-700 font-black text-[10px] uppercase tracking-widest">${a.datum}</span>
+                            <h4 class="text-xl font-black mt-2 mb-4 uppercase leading-tight italic line-clamp-2">${a.titulek}</h4>
+                            <div class="text-slate-400 font-bold text-[10px] uppercase tracking-widest uppercase">Více <i class="fas fa-arrow-right ml-1"></i></div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
         let currentSlideIdx = 0;
-        let slideInterval;
-        let totalSlides = 0;
-    
         window.otevriDetailWithGallery = function(v) {
             currentSlideIdx = 0;
-            totalSlides = v.fotkyGalerie.length;
-            const slidesHtml = v.fotkyGalerie.map((url, index) => `
-                <div class="slide absolute inset-0 transition-opacity duration-700 ease-in-out opacity-0" data-index="${index}">
-                    <img src="${url}" class="block w-full h-full object-cover">
-                </div>
-            `).join('');
-            const navHtml = totalSlides > 1 ? `
-                <button class="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-4" onclick="zmenSlide(-1)"><span class="bg-white/30 p-2 rounded-full text-white">❮</span></button>
-                <button class="absolute top-0 right-0 z-30 flex items-center justify-center h-full px-4" onclick="zmenSlide(1)"><span class="bg-white/30 p-2 rounded-full text-white">❯</span></button>
-            ` : '';
-            const technikaBadge = v.technika.split(',').map(t => `<span class="bg-red-50 text-red-700 text-[11px] px-3 py-1 rounded-full border border-red-100 font-bold">${t.trim()}</span>`).join(' ');
+            const fotkyUrls = v.fotky.length > 0 ? v.fotky : ['https://static.vecteezy.com/system/resources/previews/021/498/086/non_2x/firefighter-car-illustration-with-simple-design-isolated-on-white-background-vector.jpg'];
+            const slidesHtml = fotkyUrls.map((url, index) => `<div class="slide absolute inset-0 opacity-0" data-index="${index}"><img src="${url}" class="block w-full h-full object-cover"></div>`).join('');
+            const navHtml = fotkyUrls.length > 1 ? `<button class="absolute top-1/2 left-4 -translate-y-1/2 z-30 bg-black/50 text-white w-12 h-12 rounded-full" onclick="zmenSlide(-1)">❮</button><button class="absolute top-1/2 right-4 -translate-y-1/2 z-30 bg-black/50 text-white w-12 h-12 rounded-full" onclick="zmenSlide(1)">❯</button>` : '';
+            const technikaBadge = v.technika.split(',').map(t => `<span class="bg-red-50 text-red-700 text-[10px] px-4 py-1.5 rounded-full border border-red-100 font-black uppercase tracking-tight">${t.trim()}</span>`).join(' ');
+
+            document.getElementById('modal-meta').innerHTML = `<div class="flex items-center space-x-4"><span class="${urciBarvu(v.typ)} text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-widest">${v.typ}</span><span class="text-gray-400 font-bold uppercase text-xs">${v.datum} | ${v.cas}</span></div>`;
+            document.getElementById('modal-titulek').innerText = v.nazev;
+            document.getElementById('modal-obsah').innerHTML = `<div class="bg-slate-50 p-8 rounded-[32px] mb-10 border border-slate-100"><p class="text-[9px] text-gray-400 font-black uppercase tracking-[0.3em] mb-4 text-red-700 italic">Technika u zásahu</p><div class="flex flex-wrap gap-2">${technikaBadge}</div></div><div id="gallery-container" class="relative w-full h-64 md:h-[500px] mb-10 rounded-[40px] overflow-hidden bg-gray-100 shadow-2xl">${slidesHtml}${navHtml}</div><h4 class="font-black uppercase text-sm mb-4 border-b-4 border-red-700 inline-block italic uppercase">Zpráva o zásahu</h4><p class="text-gray-600 leading-relaxed text-lg zachovat-entery font-medium">${v.popis}</p>`;
             
-            document.getElementById('modal-obsah').innerHTML = `
-                <div class="flex items-center space-x-2 mb-2">
-                    <span class="w-3 h-3 rounded-full ${v.typ.includes('Požár') ? 'bg-red-600' : 'bg-blue-600'}"></span>
-                    <span class="text-gray-400 font-bold uppercase text-xs tracking-widest">${v.typ}</span>
-                </div>
-                <h2 class="text-3xl font-black mb-6 italic uppercase text-slate-900">${v.nazev}</h2>
-                <div class="grid grid-cols-2 gap-4 mb-8 bg-slate-50 p-4 rounded-2xl text-sm">
-                    <div><p class="text-[10px] text-gray-400 font-bold uppercase">Datum a čas</p><p class="font-bold">${v.datum} | ${v.cas}</p></div>
-                    <div><p class="text-[10px] text-gray-400 font-bold uppercase">Jednotka</p><p class="font-bold uppercase text-red-700">JSDH Hvožďany</p></div>
-                    <div class="col-span-2 pt-2 border-t border-gray-200">
-                        <p class="text-[10px] text-gray-400 font-bold uppercase mb-2">Nasazená technika</p>
-                        <div class="flex flex-wrap gap-2">${technikaBadge}</div>
-                    </div>
-                </div>
-                <div id="gallery-container" class="relative w-full h-64 md:h-[400px] mb-8 rounded-2xl overflow-hidden bg-gray-100">${slidesHtml}${navHtml}</div>
-                <h4 class="font-black uppercase text-sm mb-2 border-b-2 border-red-700 inline-block italic">Popis události</h4>
-                <p class="text-gray-600 leading-relaxed">${v.popis}</p>
-            `;
             document.getElementById('modal-detail').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
             ukazSlide(0);
-            startAutoplay();
         }
-    
+
+        window.otevriDetailAktuality = function(a) {
+            document.getElementById('modal-meta').innerHTML = `<span class="text-red-700 font-black uppercase text-[10px] tracking-[0.3em] font-bold">${a.datum}</span>`;
+            document.getElementById('modal-titulek').innerText = a.titulek;
+            const tlacitko = a.odkaz ? `<div class="mt-8 p-6 bg-red-50 rounded-[32px] border border-red-100 flex items-center justify-between"><div><p class="text-sm font-bold text-slate-900 uppercase">Doplňující informace</p></div><a href="${a.odkaz}" target="_blank" class="bg-red-700 hover:bg-red-800 text-white px-8 py-3 rounded-2xl font-black text-xs transition uppercase">Otevřít</a></div>` : '';
+            document.getElementById('modal-obsah').innerHTML = `<img src="${a.foto}" class="w-full h-80 object-cover rounded-[32px] mb-10 shadow-xl border border-slate-100"><h4 class="font-black uppercase text-sm mb-4 border-b-4 border-red-700 inline-block italic uppercase">Podrobnosti</h4><p class="text-gray-600 text-lg leading-relaxed zachovat-entery font-medium">${a.text}</p>${tlacitko}`;
+            document.getElementById('modal-detail').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
         window.ukazSlide = function(n) {
             let slides = document.getElementsByClassName("slide");
-            if (n >= slides.length) currentSlideIdx = 0;
-            if (n < 0) currentSlideIdx = slides.length - 1;
+            if (slides.length === 0) return;
+            if (n >= slides.length) currentSlideIdx = 0; if (n < 0) currentSlideIdx = slides.length - 1;
             for (let i = 0; i < slides.length; i++) { slides[i].style.opacity = 0; slides[i].style.zIndex = 1; }
-            if(slides[currentSlideIdx]) { slides[currentSlideIdx].style.opacity = 1; slides[currentSlideIdx].style.zIndex = 10; }
+            slides[currentSlideIdx].style.opacity = 1; slides[currentSlideIdx].style.zIndex = 10;
         }
-    
-        window.zmenSlide = function(n) { stopAutoplay(); ukazSlide(currentSlideIdx += n); startAutoplay(); }
-        function startAutoplay() { if (totalSlides > 1) { clearInterval(slideInterval); slideInterval = setInterval(() => { ukazSlide(currentSlideIdx += 1); }, 5000); } }
-        function stopAutoplay() { clearInterval(slideInterval); }
-        window.zavriDetail = function() { stopAutoplay(); document.getElementById('modal-detail').classList.add('hidden'); document.body.style.overflow = 'auto'; }
-        document.getElementById('modal-detail').addEventListener('click', function(e) { if (e.target === this) zavriDetail(); });
-    
-        nactiVyjezdy();
-
-        const csvAktualityUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKasjrBwUzJOjACQNGBEC_uQrNP2aw3cMH_CWGBVW2MDg8pp6uQ4dTzUhuYJJ8UgRFRaP-ooMqb3fm/pub?output=csv';
-
-async function nactiAktuality() {
-    try {
-        const response = await fetch(csvAktualityUrl);
-        const text = await response.text();
-        const radky = text.split('\n').map(r => r.trim()).filter(r => r.length > 0).slice(1); 
-
-        const aktuality = radky.map(radek => {
-            const sl = radek.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); 
-            return {
-    datum: sl[1]?.replace(/"/g, '') || '',
-    titulek: sl[2]?.replace(/"/g, '') || '',
-    text: sl[3]?.replace(/"/g, '') || '',
-    foto: upravDriveOdkaz(sl[4]?.replace(/"/g, '')) || 'https://via.placeholder.com/800x600?text=SDH+Hvozdany',
-    odkaz: sl[5]?.replace(/"/g, '')?.trim() || '' // Sloupec F (index 5)
-};
-        }).filter(a => a.titulek.length > 2);
-
-        // Vezmeme jen poslední 3
-        const posledniTri = aktuality.reverse().slice(0, 3);
-        vykresliAktuality(posledniTri);
-    } catch (error) {
-        console.error("Chyba aktuality:", error);
-    }
-}
-
-function vykresliAktuality(data) {
-    const kontejner = document.getElementById('seznam-aktualit');
-    kontejner.innerHTML = data.map(a => `
-        <div class="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100 transition hover:shadow-2xl group">
-            <div class="h-48 bg-cover bg-center transition duration-500 group-hover:scale-105" style="background-image: url('${a.foto}')"></div>
-            <div class="p-6">
-                <span class="text-red-700 font-bold text-xs uppercase tracking-widest">${a.datum}</span>
-                <h4 class="text-xl font-black mt-1 mb-4 uppercase leading-tight text-slate-900 line-clamp-2">${a.titulek}</h4>
-                <button onclick='otevriDetailAktuality(${JSON.stringify(a).replace(/"/g, '&quot;')})' class="w-full bg-slate-100 hover:bg-red-700 hover:text-white text-gray-800 py-3 rounded-xl font-bold transition text-sm italic">Číst více</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-window.otevriDetailAktuality = function(a) {
-    const obsah = document.getElementById('modal-obsah');
-    
-    // Tady je ta chytrá podmínka:
-    // Pokud a.odkaz existuje, vytvoříme HTML kód pro tlačítko, jinak nic.
-    const tlacitkoOdkaz = a.odkaz ? `
-        <div class="mt-8 p-4 bg-red-50 rounded-2xl border border-red-100 flex items-center justify-between">
-            <div>
-                <p class="text-[10px] font-bold text-red-700 uppercase">Externí informace</p>
-                <p class="text-sm font-bold text-slate-900 leading-tight">K této aktualitě je k dispozici odkaz</p>
-            </div>
-            <a href="${a.odkaz}" target="_blank" class="bg-red-700 hover:bg-red-800 text-white px-6 py-2 rounded-xl font-bold text-sm transition shadow-md shadow-red-200">
-                Otevřít <i class="fas fa-external-link-alt ml-1 text-[10px]"></i>
-            </a>
-        </div>
-    ` : '';
-
-    obsah.innerHTML = `
-        <span class="text-red-700 font-bold uppercase text-[10px] tracking-widest">${a.datum}</span>
-        <h2 class="text-3xl md:text-4xl font-black mb-6 uppercase italic text-slate-900 leading-tight">${a.titulek}</h2>
-        <img src="${a.foto}" class="w-full h-64 object-cover rounded-3xl mb-8 shadow-lg">
-        <h4 class="font-black uppercase text-sm mb-2 border-b-2 border-red-700 inline-block italic">Podrobnosti</h4>
-        <p class="text-gray-600 leading-relaxed text-lg">${a.text}</p>
+        window.zmenSlide = function(n) { ukazSlide(currentSlideIdx += n); }
+        window.zavriDetail = function() { document.getElementById('modal-detail').classList.add('hidden'); document.body.style.overflow = 'auto'; }
         
-        ${tlacitkoOdkaz} `;
-    document.getElementById('modal-detail').classList.remove('hidden');
-}
-
-// Spustíme načítání
-nactiAktuality();
+        nactiVyjezdy();
+        nactiAktuality();
     </script>
-</body>
-<footer class="bg-slate-900 text-white pt-12 pb-6 mt-20">
+
+    <footer class="bg-slate-900 text-white pt-12 pb-6 mt-20">
     <div class="container mx-auto px-4 text-center">
         <div class="grid md:grid-cols-3 gap-10 mb-10 text-left">
             <div>
@@ -322,4 +257,5 @@ nactiAktuality();
         </div>
     </div>
 </footer>
+</body>
 </html>
