@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrace | SDH Hvožďany</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-white font-sans min-h-screen">
+
+    <div id="login-screen" class="fixed inset-0 bg-slate-900 z-[200] flex items-center justify-center p-4">
+        <div class="bg-white text-slate-900 p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center">
+            <i class="fas fa-lock text-4xl text-red-600 mb-4"></i>
+            <h2 class="text-2xl font-black uppercase mb-6">Vstup pro adminy</h2>
+            <input type="password" id="admin-password" placeholder="Zadejte kód" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 mb-4 text-center text-2xl tracking-widest focus:border-red-600 outline-none">
+            <button onclick="checkPassword()" class="w-full bg-red-700 text-white py-4 rounded-xl font-bold uppercase hover:bg-red-800 transition">Přihlásit se</button>
+            <p id="error-msg" class="text-red-600 text-sm mt-4 hidden">Špatný kód, zkuste to znovu.</p>
+        </div>
+    </div>
+
+    <div id="admin-content" class="hidden">
+        <nav class="bg-red-800 p-4 shadow-lg flex justify-between items-center">
+            <span class="font-black uppercase tracking-tighter italic">Admin Panel SDH</span>
+            <button onclick="location.reload()" class="text-xs bg-black/20 px-3 py-1 rounded-lg">Odhlásit</button>
+        </nav>
+
+        <main class="container mx-auto px-4 py-8">
+            <div class="flex flex-wrap gap-4 mb-8">
+                <button onclick="showForm('vyjezdy')" class="flex-1 bg-red-700 p-4 rounded-2xl font-bold uppercase shadow-lg hover:scale-105 transition">
+                    <i class="fas fa-truck-extinguisher mr-2"></i> Nový Výjezd
+                </button>
+                <button onclick="showForm('aktuality')" class="flex-1 bg-blue-700 p-4 rounded-2xl font-bold uppercase shadow-lg hover:scale-105 transition">
+                    <i class="fas fa-newspaper mr-2"></i> Nová Aktualita
+                </button>
+            </div>
+
+            <div class="bg-white rounded-3xl overflow-hidden shadow-2xl h-[800px] relative">
+                <div id="placeholder" class="absolute inset-0 flex items-center justify-center text-slate-400 italic">
+                    Vyberte, co chcete přidat...
+                </div>
+                <iframe id="admin-iframe" src="" class="w-full h-full border-none hidden"></iframe>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // TADY SI NASTAV SVŮJ KÓD (třeba 1234)
+        const MASTER_CODE = "1234"; 
+
+        // ODKAZY NA TVOJE GOOGLE FORMULÁŘE (VLOŽ TY SVOJE)
+        const formVyjezdy = "https://docs.google.com/forms/d/e/1FAIpQLSeVqwjs38QW6DLGF-wx-foovhVEfoo0I6zV5nF_lyko2ma9mg/viewform";
+        const formAktuality = "https://docs.google.com/forms/d/e/1FAIpQLSeZV3SjoehcOcodfHpeI8NzVESwNZHVOF9N32DFGGceiXdFFQ/viewform";
+
+        function checkPassword() {
+            const input = document.getElementById('admin-password').value;
+            if(input === MASTER_CODE) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('admin-content').classList.remove('hidden');
+            } else {
+                document.getElementById('error-msg').classList.remove('hidden');
+            }
+        }
+
+        function showForm(type) {
+            const iframe = document.getElementById('admin-iframe');
+            const placeholder = document.getElementById('placeholder');
+            placeholder.classList.add('hidden');
+            iframe.classList.remove('hidden');
+            
+            if(type === 'vyjezdy') iframe.src = formVyjezdy;
+            if(type === 'aktuality') iframe.src = formAktuality;
+        }
+    </script>
+</body>
+</html>
