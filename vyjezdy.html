@@ -10,17 +10,22 @@
 </head>
 <body class="bg-slate-50 text-gray-800 font-sans leading-normal">
 
-    <nav class="bg-red-700 text-white shadow-md sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
+    <nav class="bg-red-800 text-white shadow-2xl sticky top-0 z-[100]">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center py-3 md:py-4">
+            <a href="index.html" class="flex items-center space-x-3 mb-3 md:mb-0">
                 <i class="fas fa-fire-extinguisher text-2xl"></i>
                 <span class="text-xl font-black uppercase tracking-tighter">SDH Hvožďany</span>
-            </div>
-            <ul class="flex space-x-6 font-semibold text-sm uppercase">
-                <li><a href="index.html" class="hover:text-red-200">Zpět na úvod</a></li>
+            </a>
+            <ul class="flex space-x-4 md:space-x-8 font-bold text-[13px] md:text-sm uppercase tracking-wider">
+                <li><a href="index.html" class="hover:text-red-200 py-2 transition">Úvod</a></li>
+                <li><a href="aktuality.html" class="hover:text-red-200 py-2 transition">Aktuality</a></li>
+                <li><a href="vyjezdy.html" class="hover:text-red-200 py-2 transition">Výjezdy</a></li>
+                <li><a href="kontakt.html" class="hover:text-red-200 py-2 transition">Kontakt</a></li>
             </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <main class="container mx-auto px-4 py-12">
         <section class="mb-20">
@@ -152,4 +157,33 @@
         nactiVyjezdy();
     </script>
 </body>
+<footer class="bg-slate-900 text-white pt-12 pb-6 mt-20">
+    <div class="container mx-auto px-4 text-center">
+        <div class="grid md:grid-cols-3 gap-10 mb-10 text-left">
+            <div>
+                <h4 class="font-black uppercase mb-4 text-red-600">SDH Hvožďany</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">Dobrovolní hasiči obce Hvožďany. Pomáháme a chráníme od roku 1895. Jsme tu pro vás 24/7.</p>
+            </div>
+            <div>
+                <h4 class="font-black uppercase mb-4 text-red-600">Rychlé odkazy</h4>
+                <ul class="text-gray-400 text-sm space-y-2">
+                    <li><a href="index.html" class="hover:text-white">Hlavní strana</a></li>
+                    <li><a href="aktuality.html" class="hover:text-white">Seznam aktualit</a></li>
+                    <li><a href="vyjezdy.html" class="hover:text-white">Archiv zásahů</a></li>
+                    <li><a href="https://paleni.izscr.cz/" target="_blank" class="hover:text-white">Hlášení pálení</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-black uppercase mb-4 text-red-600">Tísňové volání</h4>
+                <div class="flex space-x-4">
+                    <span class="bg-red-700 px-4 py-2 rounded-xl font-black text-xl">150</span>
+                    <span class="bg-blue-700 px-4 py-2 rounded-xl font-black text-xl">112</span>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 pt-6 text-gray-500 text-[10px] uppercase tracking-widest italic">
+            &copy; 2024 SDH Hvožďany | Vytvořeno pro sbor
+        </div>
+    </div>
+</footer>
 </html>
