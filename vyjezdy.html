@@ -17,7 +17,11 @@
         #modal-obsah-scroll::-webkit-scrollbar { width: 6px; }
         #modal-obsah-scroll::-webkit-scrollbar-track { background: #f8fafc; }
         #modal-obsah-scroll::-webkit-scrollbar-thumb { background-color: #ef4444; border-radius: 10px; }
-        .break-word-all { word-break: break-all; overflow-wrap: anywhere; white-space: pre-line; }
+        .break-word-all { 
+    word-break: normal; 
+    overflow-wrap: break-word; 
+    white-space: pre-line;
+}
     </style>
 </head>
 <body class="bg-slate-50 text-gray-800 font-sans leading-normal overflow-x-hidden">
@@ -33,6 +37,7 @@
                     <li><a href="index.html" class="hover:text-red-200 py-2 transition">Úvod</a></li>
                     <li><a href="aktuality.html" class="hover:text-red-200 py-2 transition">Aktuality</a></li>
                     <li><a href="vyjezdy.html" class="text-red-200 py-2 transition border-b-2 border-red-200">Výjezdy</a></li>
+                    <li><a href="souteze.html" class="hover:text-red-200 py-2 transition">Soutěže</a></li>
                     <li><a href="technika.html" class="hover:text-red-200 py-2 transition">Technika</a></li>
                     <li><a href="kontakt.html" class="hover:text-red-200 py-2 transition">Kontakt</a></li>
                     <li><a href="admin.html" class="text-white/20 hover:text-white transition ml-2"><i class="fas fa-user-cog"></i></a></li>
@@ -42,7 +47,7 @@
     </nav>
 
     <main class="container mx-auto px-4 py-12 text-center">
-        <h1 class="text-4xl md:text-5xl font-black uppercase italic text-slate-900 mb-2">Archiv zásahů</h1>
+        <h1 class="text-4xl md:text-5xl font-black uppercase italic text-slate-900 mb-2">Archiv výjezdů</h1>
         
         <div class="bg-white p-6 rounded-[32px] shadow-lg mb-12 border border-gray-100 flex flex-col md:flex-row gap-4 mt-10">
             <div class="flex-1 text-left">
@@ -203,8 +208,7 @@
         }
         nactiVyjezdy();
     </script>
-</body>
-<footer class="bg-slate-900 text-white pt-12 pb-6 mt-20">
+    <footer class="bg-slate-900 text-white pt-12 pb-6 mt-20">
     <div class="container mx-auto px-4 text-center">
         <div class="grid md:grid-cols-3 gap-10 mb-10 text-left">
             <div>
@@ -217,6 +221,7 @@
                     <li><a href="index.html" class="hover:text-white transition">Úvod</a></li>
                     <li><a href="aktuality.html" class="hover:text-white transition">Aktuality</a></li>
                     <li><a href="vyjezdy.html" class="hover:text-white transition">Výjezdy</a></li>
+                    <li><a href="souteze.html" class="hover:text-white transition">Soutěže</a></li>
                     <li><a href="technika.html" class="hover:text-white transition">Technika</a></li>
                     <li><a href="kontakt.html" class="hover:text-white transition">Kontakt</a></li>
                 </ul>
@@ -235,4 +240,6 @@
         </div>
     </div>
 </footer>
+</body>
+
 </html>

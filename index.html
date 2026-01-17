@@ -17,7 +17,12 @@
         #modal-obsah-scroll::-webkit-scrollbar { width: 6px; }
         #modal-obsah-scroll::-webkit-scrollbar-track { background: #f8fafc; }
         #modal-obsah-scroll::-webkit-scrollbar-thumb { background-color: #ef4444; border-radius: 10px; }
-        .break-word-all { word-break: break-all; overflow-wrap: anywhere; white-space: pre-line; }
+        /* OPRAVENÉ ZALAMOVÁNÍ */
+        .break-word-all { 
+            word-break: normal; 
+            overflow-wrap: break-word; 
+            white-space: pre-line;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-gray-800 font-sans leading-normal overflow-x-hidden">
@@ -33,6 +38,7 @@
                     <li><a href="index.html" class="text-red-200 py-2 transition border-b-2 border-red-200">Úvod</a></li>
                     <li><a href="aktuality.html" class="hover:text-red-200 py-2 transition">Aktuality</a></li>
                     <li><a href="vyjezdy.html" class="hover:text-red-200 py-2 transition">Výjezdy</a></li>
+                    <li><a href="souteze.html" class="hover:text-red-200 py-2 transition">Soutěže</a></li>
                     <li><a href="technika.html" class="hover:text-red-200 py-2 transition">Technika</a></li>
                     <li><a href="kontakt.html" class="hover:text-red-200 py-2 transition">Kontakt</a></li>
                     <li><a href="admin.html" class="text-white/20 hover:text-white transition ml-2"><i class="fas fa-user-cog"></i></a></li>
@@ -72,7 +78,7 @@
         <div class="bg-white rounded-t-[40px] md:rounded-[40px] w-full max-w-4xl h-[90vh] md:h-auto md:max-h-[90vh] shadow-2xl relative text-left overflow-hidden flex flex-col" onclick="event.stopPropagation()">
             <div id="modal-header" class="p-6 md:p-10 border-b bg-white shrink-0">
                 <div id="modal-meta" class="mb-2"></div>
-                <h2 id="modal-titulek" class="text-2xl md:text-4xl font-black italic uppercase text-slate-900 leading-tight break-word-all"></h2>
+                <h2 id="modal-titulek" class="text-2xl md:text-4xl font-black italic uppercase text-slate-900 leading-tight"></h2>
                 <div id="modal-location" class="mt-2 text-red-700 font-bold uppercase text-xs tracking-wider flex items-center"></div>
             </div>
             <div id="modal-obsah-scroll" class="overflow-y-auto flex-grow bg-white px-6 md:px-10 py-6">
@@ -138,9 +144,9 @@
                             <span class="${urciBarvu(v.typ)} text-[9px] px-3 py-1 rounded-full font-black uppercase tracking-widest">${v.typ}</span>
                             <span class="text-gray-300 text-[10px] font-black uppercase tracking-widest">${formatujDatum(v.datum)}</span>
                         </div>
-                        <h4 class="text-xl font-black mb-1 uppercase italic leading-tight break-word-all">${v.nazev}</h4>
+                        <h4 class="text-xl font-black mb-1 uppercase italic leading-tight">${v.nazev}</h4>
                         <p class="text-red-700 font-bold text-[10px] uppercase mb-4 tracking-wider"><i class="fas fa-map-marker-alt mr-1"></i> ${v.misto}</p>
-                        <p class="text-gray-500 text-sm line-clamp-3 leading-relaxed break-word-all">${v.popis}</p>
+                        <p class="text-gray-500 text-sm line-clamp-3 leading-relaxed">${v.popis}</p>
                     </div>
                 `).join('');
 
@@ -158,7 +164,7 @@
                             <div class="h-48 bg-center transition duration-500 group-hover:scale-105 ${fotoStyle}" style="background-image: url('${fotoImg}')"></div>
                             <div class="p-8">
                                 <span class="text-red-700 font-black text-[10px] uppercase tracking-widest">${formatujDatum(a.datum)}</span>
-                                <h4 class="text-xl font-black mt-2 mb-4 leading-tight group-hover:text-red-700 transition line-clamp-2 uppercase italic break-word-all">${a.titulek}</h4>
+                                <h4 class="text-xl font-black mt-2 mb-4 leading-tight group-hover:text-red-700 transition line-clamp-2 uppercase italic">${a.titulek}</h4>
                                 <div class="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Číst více <i class="fas fa-arrow-right ml-1"></i></div>
                             </div>
                         </div>
@@ -200,45 +206,45 @@
         }
         nactiData();
     </script>
+
+    <footer class="bg-slate-900 text-white pt-12 pb-6 mt-20">
+        <div class="container mx-auto px-4 text-center">
+            <div class="grid md:grid-cols-3 gap-10 mb-10 text-left">
+                <div>
+                    <h4 class="font-black uppercase mb-4 text-red-600 tracking-widest">SDH Hvožďany</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">Dobrovolní hasiči obce Hvožďany. Pomáháme a chráníme od roku 1887.</p>
+                    <div class="flex space-x-4 mt-6">
+                        <a href="https://www.facebook.com/groups/124503750963868/" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-800 hover:bg-[#1877F2] transition-all duration-300 text-white shadow-lg">
+                            <i class="fab fa-facebook-f text-lg"></i>
+                        </a>
+                        <a href="https://www.instagram.com/sdh.hvozdany/" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-800 hover:bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] transition-all duration-300 text-white shadow-lg">
+                            <i class="fab fa-instagram text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-black uppercase mb-4 text-red-600 tracking-widest">Rychlé odkazy</h4>
+                    <ul class="text-gray-400 text-sm space-y-2 font-bold uppercase tracking-tight">
+                        <li><a href="index.html" class="hover:text-white transition">Úvod</a></li>
+                        <li><a href="aktuality.html" class="hover:text-white transition">Aktuality</a></li>
+                        <li><a href="vyjezdy.html" class="hover:text-white transition">Výjezdy</a></li>
+                        <li><a href="souteze.html" class="hover:text-white transition">Soutěže</a></li>
+                        <li><a href="technika.html" class="hover:text-white transition">Technika</a></li>
+                        <li><a href="kontakt.html" class="hover:text-white transition">Kontakt</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-black uppercase mb-4 text-red-600 tracking-widest">Tísňové volání</h4>
+                    <div class="flex space-x-3">
+                        <span class="bg-red-700 px-5 py-2 rounded-2xl font-black text-xl shadow-lg">150</span>
+                        <span class="bg-blue-700 px-5 py-2 rounded-2xl font-black text-xl shadow-lg">112</span>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-6 text-gray-600 text-[9px] uppercase tracking-[0.3em] font-black italic">
+                © 2024 SDH Hvožďany | Jednotka sboru dobrovolných hasičů
+            </div>
+        </div>
+    </footer>
 </body>
-<footer class="bg-slate-900 text-white pt-12 pb-6 mt-20">
-    <div class="container mx-auto px-4 text-center">
-        <div class="grid md:grid-cols-3 gap-10 mb-10 text-left">
-            <div>
-                <h4 class="font-black uppercase mb-4 text-red-600 tracking-widest">SDH Hvožďany</h4>
-                <p class="text-gray-400 text-sm leading-relaxed">Dobrovolní hasiči obce Hvožďany. Pomáháme a chráníme od roku 1887.</p>
-                
-                <div class="flex space-x-4 mt-6">
-                    <a href="https://www.facebook.com/groups/124503750963868/" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-800 hover:bg-[#1877F2] transition-all duration-300 text-white shadow-lg" title="Sledujte nás na Facebooku">
-                        <i class="fab fa-facebook-f text-lg"></i>
-                    </a>
-                    <a href="https://www.instagram.com/sdh.hvozdany/" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-800 hover:bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] transition-all duration-300 text-white shadow-lg" title="Sledujte nás na Instagramu">
-                        <i class="fab fa-instagram text-lg"></i>
-                    </a>
-                </div>
-            </div>
-            <div>
-                <h4 class="font-black uppercase mb-4 text-red-600 tracking-widest">Rychlé odkazy</h4>
-                <ul class="text-gray-400 text-sm space-y-2 font-bold uppercase tracking-tight">
-                    <li><a href="index.html" class="hover:text-white transition">Úvod</a></li>
-                    <li><a href="aktuality.html" class="hover:text-white transition">Aktuality</a></li>
-                    <li><a href="vyjezdy.html" class="hover:text-white transition">Výjezdy</a></li>
-                    <li><a href="technika.html" class="hover:text-white transition">Technika</a></li>
-                    <li><a href="kontakt.html" class="hover:text-white transition">Kontakt</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-black uppercase mb-4 text-red-600 tracking-widest">Tísňové volání</h4>
-                <div class="flex space-x-3">
-                    <span class="bg-red-700 px-5 py-2 rounded-2xl font-black text-xl shadow-lg">150</span>
-                    <span class="bg-blue-700 px-5 py-2 rounded-2xl font-black text-xl shadow-lg">112</span>
-                </div>
-                <p class="text-gray-500 text-[10px] mt-4 uppercase font-bold tracking-tighter italic text-left">V případě nouze volejte tísňové linky</p>
-            </div>
-        </div>
-        <div class="border-t border-gray-800 pt-6 text-gray-600 text-[9px] uppercase tracking-[0.3em] font-black italic">
-            © 2024 SDH Hvožďany | Jednotka sboru dobrovolných hasičů
-        </div>
-    </div>
-</footer>
 </html>
