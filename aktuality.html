@@ -2,53 +2,52 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Archiv aktualit | SDH Hvožďany</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* ČISTÝ SCROLLBAR PRO MODAL */
-        #modal-obsah-scroll::-webkit-scrollbar { width: 8px; }
+        body.modal-open { overflow: hidden; position: fixed; width: 100%; }
+        #modal-obsah-scroll {
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: #ef4444 #f8fafc;
+        }
+        #modal-obsah-scroll::-webkit-scrollbar { width: 6px; }
         #modal-obsah-scroll::-webkit-scrollbar-track { background: #f8fafc; }
         #modal-obsah-scroll::-webkit-scrollbar-thumb { background-color: #ef4444; border-radius: 10px; }
-        #modal-obsah-scroll { scrollbar-width: thin; scrollbar-color: #ef4444 #f8fafc; }
-        
-        /* ZACHOVÁNÍ ENTERŮ V TEXTU */
-        .zachovat-entery { white-space: pre-line; }
+        .break-word-all { word-break: break-all; overflow-wrap: anywhere; white-space: pre-line; }
     </style>
 </head>
-<body class="bg-slate-50 text-gray-800 font-sans leading-normal">
+<body class="bg-slate-50 text-gray-800 font-sans leading-normal overflow-x-hidden">
 
     <nav class="bg-red-800 text-white shadow-2xl sticky top-0 z-[100]">
-    <div class="container mx-auto px-4">
-        <div class="flex flex-col md:flex-row justify-between items-center py-3 md:py-4">
-            <a href="index.html" class="flex items-center space-x-3 mb-3 md:mb-0">
-                <i class="fas fa-fire-extinguisher text-2xl"></i>
-                <span class="text-xl font-black uppercase tracking-tighter">SDH Hvožďany</span>
-            </a>
-            <ul class="flex space-x-4 md:space-x-8 font-bold text-[11px] md:text-sm uppercase tracking-wider items-center">
-                <li><a href="index.html" class="hover:text-red-200 py-2 transition">Úvod</a></li>
-                
-                <li><a href="aktuality.html" class="text-red-200 py-2 transition border-b-2 border-red-200">Aktuality</a></li>
-                <li><a href="vyjezdy.html" class="hover:text-red-200 py-2 transition">Výjezdy</a></li>
-                <li><a href="technika.html" class="hover:text-red-200 py-2 transition">Technika</a></li>
-                <li><a href="kontakt.html" class="hover:text-red-200 py-2 transition">Kontakt</a></li>
-                
-                <li><a href="admin.html" class="text-white/20 hover:text-white transition ml-2"><i class="fas fa-user-cog"></i></a></li>
-            </ul>
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center py-3 md:py-4">
+                <a href="index.html" class="flex items-center space-x-3 mb-3 md:mb-0">
+                    <i class="fas fa-fire-extinguisher text-2xl"></i>
+                    <span class="text-xl font-black uppercase tracking-tighter">SDH Hvožďany</span>
+                </a>
+                <ul class="flex space-x-4 md:space-x-8 font-bold text-[11px] md:text-sm uppercase tracking-wider items-center">
+                    <li><a href="index.html" class="hover:text-red-200 py-2 transition">Úvod</a></li>
+                    <li><a href="aktuality.html" class="text-red-200 py-2 transition border-b-2 border-red-200">Aktuality</a></li>
+                    <li><a href="vyjezdy.html" class="hover:text-red-200 py-2 transition">Výjezdy</a></li>
+                    <li><a href="technika.html" class="hover:text-red-200 py-2 transition">Technika</a></li>
+                    <li><a href="kontakt.html" class="hover:text-red-200 py-2 transition">Kontakt</a></li>
+                    <li><a href="admin.html" class="text-white/20 hover:text-white transition ml-2"><i class="fas fa-user-cog"></i></a></li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
     <main class="container mx-auto px-4 py-12">
         <div class="mb-10 text-center text-slate-900">
             <h1 class="text-4xl md:text-5xl font-black uppercase italic mb-2">Novinky ze sboru</h1>
-            <p class="text-gray-500 italic uppercase text-[10px] tracking-widest font-bold">Sledujte, co se u nás právě děje</p>
         </div>
 
         <div class="bg-white p-6 rounded-[32px] shadow-lg mb-12 border border-gray-100 flex flex-col md:flex-row gap-4">
-            <div class="w-full md:w-48">
-                <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-2 tracking-widest">Rok</label>
+            <div class="w-full md:w-48 text-left">
+                <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-2 tracking-widest italic">Rok</label>
                 <select id="filter-rok" onchange="resetAndFilter()" class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-red-600 font-bold text-sm cursor-pointer">
                     <option value="">Všechny roky</option>
                     <option value="2026">2026</option>
@@ -56,8 +55,8 @@
                     <option value="2024">2024</option>
                 </select>
             </div>
-            <div class="flex-1">
-                <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-2 tracking-widest">Hledat v textu</label>
+            <div class="flex-1 text-left">
+                <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-2 tracking-widest italic">Hledat v novinkách</label>
                 <input type="text" id="search-input" onkeyup="resetAndFilter()" placeholder="Zadejte hledaný výraz..." class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-red-600 font-bold text-sm">
             </div>
         </div>
@@ -66,72 +65,59 @@
         <div id="pagination" class="mt-16 flex justify-center items-center space-x-4"></div>
     </main>
 
-    <div id="modal-detail" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-center justify-center p-2 md:p-6 backdrop-blur-sm" onclick="zavriDetail()">
-        <div class="bg-white rounded-[40px] max-w-4xl w-full max-h-[90vh] shadow-2xl relative text-left overflow-hidden flex flex-col" onclick="event.stopPropagation()">
-            
-            <div id="modal-header" class="p-8 md:p-10 border-b bg-white relative z-10">
-                <div id="modal-meta" class="mb-4"></div>
-                <h2 id="modal-titulek" class="text-3xl md:text-5xl font-black italic uppercase text-slate-900 leading-tight tracking-tighter"></h2>
+    <div id="modal-detail" class="fixed inset-0 bg-black/95 z-[200] hidden flex items-end md:items-center justify-center p-0 md:p-6 backdrop-blur-sm" onclick="zavriDetail()">
+        <div class="bg-white rounded-t-[40px] md:rounded-[40px] w-full max-w-4xl h-[90vh] md:h-auto md:max-h-[90vh] shadow-2xl relative text-left overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+            <div id="modal-header" class="p-6 md:p-10 border-b bg-white shrink-0">
+                <div id="modal-meta" class="mb-2"></div>
+                <h2 id="modal-titulek" class="text-2xl md:text-5xl font-black italic uppercase text-slate-900 leading-tight break-word-all"></h2>
             </div>
-
-            <div id="modal-obsah-scroll" class="overflow-y-auto flex-grow bg-white">
-                <div id="modal-obsah" class="p-8 md:p-10"></div>
+            <div id="modal-obsah-scroll" class="overflow-y-auto flex-grow bg-white px-6 md:px-10 py-6">
+                <div id="modal-obsah"></div>
             </div>
-
-            <div class="p-6 border-t bg-gray-50 flex justify-end relative z-10">
-                <button onclick="zavriDetail()" class="bg-red-700 hover:bg-red-800 text-white px-10 py-4 rounded-2xl font-black shadow-lg transition uppercase text-sm tracking-widest text-center">Zavřít aktualitu</button>
+            <div class="p-4 md:p-6 border-t bg-slate-50 flex justify-end shrink-0">
+                <button onclick="zavriDetail()" class="w-full md:w-auto bg-red-700 hover:bg-red-800 text-white px-10 py-4 rounded-2xl font-black shadow-lg transition uppercase text-sm tracking-widest text-center">Zavřít</button>
             </div>
         </div>
     </div>
+    
 
     <script>
         const csvAktualityUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKasjrBwUzJOjACQNGBEC_uQrNP2aw3cMH_CWGBVW2MDg8pp6uQ4dTzUhuYJJ8UgRFRaP-ooMqb3fm/pub?output=csv';
-        let vsechnyAktuality = [];
-        let filtrovaneAktuality = [];
-        let currentPage = 1;
-        const itemsPerPage = 9;
+        const logoSboru = 'https://lh3.googleusercontent.com/d/1KOKFWhRm3ClqaALFx0SrH_BAjZcOW8fF=w1000?authuser=0'; 
 
-        // Robustní parser pro CSV (zvládá Entery v buňkách)
+        let vsechnyAktuality = []; let filtrovaneAktuality = []; let currentPage = 1; const itemsPerPage = 9;
+
+        function formatujDatum(d) {
+            if (!d || !d.includes('-')) return d;
+            const [rok, mesic, den] = d.split('-');
+            return `${parseInt(den)}. ${parseInt(mesic)}. ${rok}`;
+        }
+
         function parseCSV(text) {
-            const result = [];
-            let row = [''];
-            let inQuotes = false;
-            let i = 0;
-            while (i < text.length) {
+            const result = []; let row = ['']; let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
                 const char = text[i];
-                const nextChar = text[i+1];
-                if (char === '"' && inQuotes && nextChar === '"') { row[row.length-1] += '"'; i++; }
-                else if (char === '"') { inQuotes = !inQuotes; }
-                else if (char === ',' && !inQuotes) { row.push(''); }
+                if (char === '"') inQuotes = !inQuotes;
+                else if (char === ',' && !inQuotes) row.push('');
                 else if (char === '\n' && !inQuotes) { result.push(row); row = ['']; }
-                else if (char !== '\r') { row[row.length-1] += char; }
-                i++;
+                else if (char !== '\r') row[row.length-1] += char;
             }
-            if (row.length > 1 || row[0] !== '') result.push(row);
-            return result;
+            if (row.length > 1 || row[0] !== '') result.push(row); return result;
         }
 
         function upravDriveOdkaz(odkaz) {
-            if (!odkaz) return null;
+            if (!odkaz || odkaz.trim().length < 10) return null;
             const match = odkaz.match(/id=([\w-]+)/) || odkaz.match(/\/d\/([\w-]+)/);
-            if (match && match[1]) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
-            return odkaz;
+            return match ? `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000` : odkaz;
         }
 
         async function nactiVsechnyAktuality() {
             try {
-                const res = await fetch(csvAktualityUrl);
-                const text = await res.text();
-                const radky = parseCSV(text).slice(1);
-
-                vsechnyAktuality = radky.map(sl => ({
-                    datum: sl[1] || '',
-                    titulek: sl[2] || '',
-                    text: sl[3] || '',
-                    foto: upravDriveOdkaz(sl[4]) || 'https://via.placeholder.com/800x600?text=SDH+Hvozdany',
-                    odkaz: (sl[5] || '').trim()
+                const res = await fetch(csvAktualityUrl); const text = await res.text();
+                vsechnyAktuality = parseCSV(text).slice(1).map(sl => ({
+                    datum: sl[1] || '', titulek: sl[2] || '', text: sl[3] || '',
+                    foto: upravDriveOdkaz(sl[4]), odkaz: (sl[5] || '').trim()
                 })).filter(a => a.titulek.length > 2);
-
                 resetAndFilter();
             } catch (err) { console.error(err); }
         }
@@ -140,37 +126,35 @@
             currentPage = 1;
             const rokValue = document.getElementById('filter-rok').value;
             const searchValue = document.getElementById('search-input').value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
             filtrovaneAktuality = vsechnyAktuality.filter(a => {
                 const textKProhledani = (a.titulek + a.text).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                const sediRok = rokValue === "" || a.datum.includes(rokValue);
-                const sediSearch = searchValue === "" || textKProhledani.includes(searchValue);
-                return sediRok && sediSearch;
+                return (rokValue === "" || a.datum.includes(rokValue)) && (searchValue === "" || textKProhledani.includes(searchValue));
             }).reverse();
-
             vykresliStranu();
         }
 
         function vykresliStranu() {
             const start = (currentPage - 1) * itemsPerPage;
-            const dataStrany = filtrovaneAktuality.slice(start, start + itemsPerPage);
+            const data = filtrovaneAktuality.slice(start, start + itemsPerPage);
             const kontejner = document.getElementById('seznam-aktualit');
 
-            if (dataStrany.length === 0) {
-                kontejner.innerHTML = '<p class="col-span-full text-center text-gray-400 py-20 font-bold uppercase tracking-widest">Žádné aktuality nenalezeny</p>';
+            if (data.length === 0) {
+                kontejner.innerHTML = '<p class="col-span-full text-center text-gray-400 py-20 font-bold uppercase tracking-widest italic">Žádné aktuality nenalezeny</p>';
             } else {
-                kontejner.innerHTML = dataStrany.map(a => `
-                    <div class="bg-white rounded-[40px] shadow-lg overflow-hidden border border-gray-100 transition hover:shadow-2xl hover:-translate-y-1 group cursor-pointer" onclick='otevriDetailAktuality(${JSON.stringify(a).replace(/'/g, "&apos;")})'>
-                        <div class="h-56 bg-cover bg-center transition duration-500 group-hover:scale-105" style="background-image: url('${a.foto}')"></div>
-                        <div class="p-8">
-                            <span class="text-red-700 font-black text-[10px] uppercase tracking-[0.2em]">${a.datum}</span>
-                            <h4 class="text-xl font-black mt-2 mb-4 leading-tight group-hover:text-red-700 transition line-clamp-2 uppercase italic text-slate-900">${a.titulek}</h4>
-                            <div class="flex items-center text-slate-400 font-bold text-[10px] uppercase tracking-widest">
-                                Více informací <i class="fas fa-arrow-right ml-2 text-[8px]"></i>
+                kontejner.innerHTML = data.map(a => {
+                    const fotoStyle = a.foto ? "bg-cover" : "bg-contain bg-no-repeat bg-slate-50";
+                    const fotoImg = a.foto ? a.foto : logoSboru;
+                    return `
+                        <div class="bg-white rounded-[40px] shadow-lg overflow-hidden border border-gray-100 transition hover:shadow-2xl hover:-translate-y-1 group cursor-pointer text-left" onclick='otevriDetailAktuality(${JSON.stringify(a).replace(/'/g, "'")})'>
+                            <div class="h-48 bg-center transition duration-500 group-hover:scale-105 ${fotoStyle}" style="background-image: url('${fotoImg}')"></div>
+                            <div class="p-8">
+                                <span class="text-red-700 font-black text-[10px] uppercase tracking-widest">${formatujDatum(a.datum)}</span>
+                                <h4 class="text-xl font-black mt-2 mb-4 leading-tight group-hover:text-red-700 transition line-clamp-2 uppercase italic break-word-all">${a.titulek}</h4>
+                                <div class="text-slate-400 font-bold text-[10px] uppercase tracking-widest uppercase">Více informací <i class="fas fa-arrow-right ml-1"></i></div>
                             </div>
                         </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
             vykresliPagination();
         }
@@ -179,53 +163,26 @@
             const totalPages = Math.ceil(filtrovaneAktuality.length / itemsPerPage);
             const pagKontejner = document.getElementById('pagination');
             if (totalPages <= 1) { pagKontejner.innerHTML = ''; return; }
-
-            pagKontejner.innerHTML = `
-                <button onclick="changePage(-1)" ${currentPage === 1 ? 'disabled' : ''} class="px-8 py-4 rounded-2xl transition ${currentPage === 1 ? 'text-gray-300' : 'bg-slate-200 hover:bg-red-700 hover:text-white'}">❮</button>
-                <span class="font-black text-slate-900 uppercase text-xs px-4 tracking-widest">Strana ${currentPage} / ${totalPages}</span>
-                <button onclick="changePage(1)" ${currentPage === totalPages ? 'disabled' : ''} class="px-8 py-4 rounded-2xl transition ${currentPage === totalPages ? 'text-gray-300' : 'bg-slate-200 hover:bg-red-700 hover:text-white'}">❯</button>
-            `;
+            pagKontejner.innerHTML = `<button onclick="changePage(-1)" ${currentPage === 1 ? 'disabled' : ''} class="px-8 py-4 rounded-2xl transition ${currentPage === 1 ? 'text-gray-300' : 'bg-slate-200 hover:bg-red-700 hover:text-white'}">❮</button><span class="px-4 font-black">Strana ${currentPage} / ${totalPages}</span><button onclick="changePage(1)" ${currentPage === totalPages ? 'disabled' : ''} class="px-8 py-4 rounded-2xl transition ${currentPage === totalPages ? 'text-gray-300' : 'bg-slate-200 hover:bg-red-700 hover:text-white'}">❯</button>`;
         }
 
-        function changePage(step) {
-            currentPage += step;
-            vykresliStranu();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        function changePage(step) { currentPage += step; vykresliStranu(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
         window.otevriDetailAktuality = function(a) {
-            document.getElementById('modal-meta').innerHTML = `<span class="text-red-700 font-black uppercase text-[10px] tracking-[0.3em]">${a.datum}</span>`;
+            document.getElementById('modal-meta').innerHTML = `<span class="text-red-700 font-black uppercase text-[10px] tracking-widest font-bold">${formatujDatum(a.datum)}</span>`;
             document.getElementById('modal-titulek').innerText = a.titulek;
-
-            const tlacitkoOdkaz = a.odkaz ? `
-                <div class="mt-10 p-6 bg-red-50 rounded-[32px] border border-red-100 flex items-center justify-between">
-                    <div>
-                        <p class="text-[10px] font-black text-red-700 uppercase tracking-widest">Externí příloha</p>
-                        <p class="text-sm font-bold text-slate-900 uppercase">K této zprávě patří odkaz</p>
-                    </div>
-                    <a href="${a.odkaz}" target="_blank" class="bg-red-700 hover:bg-red-800 text-white px-8 py-3 rounded-2xl font-black text-xs transition shadow-md uppercase">Otevřít</a>
-                </div>
-            ` : '';
-
-            document.getElementById('modal-obsah').innerHTML = `
-                <img src="${a.foto}" class="w-full h-80 object-cover rounded-[32px] mb-10 shadow-xl border border-slate-100">
-                <h4 class="font-black uppercase text-sm mb-4 border-b-4 border-red-700 inline-block italic uppercase tracking-widest">Podrobnosti aktuality</h4>
-                <p class="text-gray-600 text-lg leading-relaxed zachovat-entery font-medium">${a.text}</p>
-                ${tlacitkoOdkaz}
-            `;
+            const fotoDetail = a.foto ? `<img src="${a.foto}" class="w-full h-auto max-h-[500px] object-contain rounded-3xl mb-8 shadow-xl border border-slate-100 bg-slate-50">` : '';
+            const btn = a.odkaz ? `<div class="mt-10 p-6 bg-red-50 rounded-3xl border border-red-100 flex items-center justify-between"><div><p class="text-sm font-bold text-slate-900 uppercase">Příloha</p></div><a href="${a.odkaz}" target="_blank" class="bg-red-700 text-white px-8 py-3 rounded-2xl font-black text-xs transition uppercase">Otevřít</a></div>` : '';
+            document.getElementById('modal-obsah').innerHTML = `${fotoDetail}<h4 class="font-black uppercase text-sm mb-4 border-b-4 border-red-700 inline-block italic uppercase text-slate-900">Zpráva</h4><p class="text-gray-600 text-lg leading-relaxed break-word-all">${a.text}</p>${btn}`;
             document.getElementById('modal-detail').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            document.body.classList.add('modal-open');
         }
 
-        window.zavriDetail = function() {
-            document.getElementById('modal-detail').classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        }
-
+        window.zavriDetail = function() { document.getElementById('modal-detail').classList.add('hidden'); document.body.classList.remove('modal-open'); }
         nactiVsechnyAktuality();
     </script>
-
-    <footer class="bg-slate-900 text-white pt-12 pb-6 mt-20">
+</body>
+<footer class="bg-slate-900 text-white pt-12 pb-6 mt-20">
     <div class="container mx-auto px-4 text-center">
         <div class="grid md:grid-cols-3 gap-10 mb-10 text-left">
             <div>
@@ -256,5 +213,4 @@
         </div>
     </div>
 </footer>
-</body>
 </html>
